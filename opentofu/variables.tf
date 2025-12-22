@@ -28,3 +28,15 @@ variable "db_instance_class" {
   type    = string
   default = "db.t3.micro"
 }
+
+variable "enable_public_migrations" {
+  description = "Si es true, habilita acceso público temporal a RDS para correr migraciones desde tu PC"
+  type        = bool
+  default     = false
+}
+
+variable "my_ip_cidr" {
+  description = "IP pública (solo se usa si enable_public_migrations=true)"
+  type        = string
+  default     = ""
+}

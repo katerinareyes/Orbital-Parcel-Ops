@@ -58,7 +58,7 @@ resource "aws_db_subnet_group" "main" {
 
 resource "random_password" "db" {
   length  = 24
-  special = true
+  special = false
 }
 
 resource "aws_db_instance" "postgres" {
@@ -75,7 +75,7 @@ resource "aws_db_instance" "postgres" {
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
 
-  publicly_accessible    = false
+  publicly_accessible    = var.enable_public_migrations
   skip_final_snapshot    = true
   deletion_protection    = false
 
@@ -178,4 +178,18 @@ resource "aws_lambda_permission" "apigw_invoke" {
   function_name = aws_lambda_function.api.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.http_api.execution_arn}/*/*"
+}
+
+# Regla TEMPORAL: permitir Postgres desde IP solo cuando enable_public_migrations=true
+resource "aws_security_group_rule" "rds_from_my_ip_temp" {
+  count             = var.enable_public_migrations ? 1 : 0
+  type              = "ingress"
+  security_group_id = aws_security_group.rds_sg.id
+
+  from_port   = 5432
+  to_port     = 5432
+  protocol    = "tcp"
+
+  cidr_blocks = [var.my_ip_cidr]
+  description = "TEMP: Postgres from my public IP for Alembic migrations"
 }
