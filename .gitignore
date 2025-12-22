@@ -6,6 +6,18 @@ __pycache__/
 # C extensions
 *.so
 
+# Builds
+build/
+lambda.zip
+opentofu/lambda.zip
+
+# OpenTofu/Terraform
+opentofu/.terraform/
+opentofu/.terraform.lock.hcl
+opentofu/terraform.tfstate
+opentofu/terraform.tfstate.backup
+opentofu/crash.log
+
 # Distribution / packaging
 .Python
 build/
